@@ -1,3 +1,5 @@
+#include "fifo.h"
+
 /* create FIFO if necessary */
 void createFIFO(char* FIFO_NAME)
 {
@@ -12,8 +14,8 @@ void createFIFO(char* FIFO_NAME)
     }
 }
 
-/* open specific fifo */
-int openFIFO(char* FIFO_NAME)
+/* open specific fifo for read only */
+int openFIFOforRD(char* FIFO_NAME)
 {
     int fd = open(FIFO_NAME, O_RDONLY | O_NONBLOCK);
     if (fd == -1)
@@ -25,3 +27,15 @@ int openFIFO(char* FIFO_NAME)
     return fd;
 }
 
+/* open specific fifo for write only */
+int openFIFOforWR(char* FIFO_NAME)
+{
+    int fd = open(FIFO_NAME, O_WRONLY | O_NONBLOCK);
+    if (fd == -1)
+    {
+        printf("Could not open fifo %s for writing only access", FIFO_NAME);
+        perror("");
+        exit(EXIT_FAILURE);
+    }
+    return fd;
+}
