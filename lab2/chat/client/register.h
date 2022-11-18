@@ -5,11 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "clientinfo.h"
-#include "fifo.h"
-
-#define USER_MXLEN 25
-#define RESPLEN 50
+#include "../common/clientinfo.h"
+#include "../common/fifo.h"
 
 void Register();
 

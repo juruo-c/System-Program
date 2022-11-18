@@ -7,8 +7,9 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <mysql.h>
-#include "fifo.h"
+#include "../common/fifo.h"
 #include "register.h"
+#include "login.h"
 
 #define _DATABASE_NAME_ "test"
 #define _DATABASE_USER_ "root"
@@ -27,6 +28,7 @@ void handler(int sig)
 /* show choices */
 void showChoices()
 {
+	system("clear");
 	puts("Welcome! What do you want to do?");
 	puts("=================================");
 	puts("=========  1 - register =========");
@@ -40,23 +42,20 @@ int main()
 	int i;
 	
 	/* handle signals */
-	signal(SIGTERM, handler);
-	
-	/* create myfifo */
-	sprintf(myfifo, "/tmp/client_fifos/client%d", getpid());
-	createFIFO(myfifo);		
+	signal(SIGTERM, handler);			
 
 	/* ask user to make choice */
 	while(1)
 	{
 		showChoices();	
 		int choice; scanf("%d", &choice);
+		getchar();
 		switch(choice) {
 			case 1:
-				Register();	
+				Register(myfifo);	
 				break;
 			case 2:
-//				Login();
+				Login(myfifo);
 				break;
 			case 3:
 				puts("Bye!");

@@ -51,7 +51,6 @@ void Register(char* myfifo)
 		REGISTERINFO info;
 		strncpy(info.username, username, strlen(username) + 1);
 		strncpy(info.password, password, strlen(password) + 1);
-		strncpy(info.fifo, myfifo, strlen(myfifo) + 1);
 		
 		/* open server fifo for writing only */
 		int fd = openFIFOforWR(SERVER_FIFO_NAMES[0]);
@@ -74,7 +73,7 @@ void Register(char* myfifo)
 		/* Successful or Failure */
 		if (response[0] == 'S')
 		{
-			printf("Sucessful register! (:\n");
+			printf("Successful register! (:\n");
 			printf("Backing to main page...\n");
 			sleep(2);
 			break;	
