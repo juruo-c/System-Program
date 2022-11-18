@@ -1,32 +1,26 @@
 #include "register.h"
 
-/* failed to register, write reason(erno) to client fifo */
-void RegisterFeedback(int fd, int erno)
+/* failed or succeed to register, write result(reno) to client fifo */
+void RegisterFeedback(int fd, int reno)
 {
 	char buf[50];
-    switch (erno)
+    switch (reno)
     {
         case 1: // username has been used
 			sprintf(buf, "Failure!Username has been used!");
-			if (write(fd, buf, strlen(buf) == -1))
-			{
-				printf("Failed to write fifo\n");
-				perror("");
-				close(fd);
-				exit(EXIT_FAILURE);
-			}
             break;
 		case 2: // Successful register!
             sprintf(buf, "Successful!");
-            if (write(fd, buf, strlen(buf)) == -1)
-            {
-                printf("Failed to write fifo\n");
-                perror("");
-                close(fd);
-                exit(EXIT_FAILURE);
-            }
             break;
     }
+	if (write(fd, buf, strlen(buf) + 1) == -1)
+    {
+		printf("Failed to write fifo\n");
+        perror("");
+        close(fd);
+        exit(EXIT_FAILURE);
+    }
+	
 }
 
 /* process register request in fifo(fd) */
@@ -40,14 +34,10 @@ int Register(int fd)
         exit(EXIT_FAILURE);
     }
 
-    /* open client's fifo for writing only */
-    fd = open(info.fifo, O_WRONLY | O_NONBLOCK);
-    if (fd == -1)
-    {
-        printf("Failed to open fifo %s for writing only\n", info.fifo);
-        perror("");
-    	exit(EXIT_FAILURE);
-	}
+	/* open client's fifo for writing only */
+	char fifo[100] = "/tmp/client_fifos/client_";
+	strcat(fifo, info.username);
+   	fd = openFIFOforWR(fifo); 
 
     /* check if username is existed */
    	
@@ -69,7 +59,7 @@ int Register(int fd)
 	/* check if username is existed in user table  */
 	MYSQL_RES* res;
 	MYSQL_ROW row;
-	char query[200] = "SELECT * FROM user WHERE name='";
+	char query[200] = "SELECT * FROM userinfo WHERE name='";
 	strcat(query, info.username);
 	strcat(query, "';");
 //	printf("%s\n", query);	
@@ -91,11 +81,11 @@ int Register(int fd)
 
     /* add userinfo(username, password, fifo) into database */
 	memset(query, 0, sizeof(query));
-	strcat(query, "Insert into user(name, passwd) values('");
+	strcat(query, "Insert into userinfo(name, passwd, online) values('");
 	strcat(query, info.username);
 	strcat(query, "','");
 	strcat(query, info.password);
-	strcat(query, "');");
+	strcat(query, "',0);");
 	if (mysql_query(&conn, query))
 	{
 		printf("Failed to query '%s'\n", query);

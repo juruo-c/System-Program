@@ -7,11 +7,10 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <mysql.h>
-#include "fifo.h"
+#include "../common/fifo.h"
 #include "register.h"
 #include "login.h"
 #include "message.h"
-#include "register.h"
 
 #define _DATABASE_NAME_ "test"
 #define _DATABASE_USER_ "root"
@@ -22,7 +21,7 @@
 void handler(int sig)
 {
     int i;
-    for (i = 0; i < 3; i ++ ) unlink(FIFO_NAMES[i]);
+    for (i = 0; i < 3; i ++ ) unlink(SERVER_FIFO_NAMES[i]);
     exit(1);
 }
 
@@ -36,7 +35,7 @@ int ProcessRequest(int request, int fd)
         case 1: // login
             return Login(fd);
         case 2: // send message 
-            return sendMessage(fd);
+            return 0;
     }
 }
 
@@ -48,13 +47,13 @@ int main()
     signal(SIGTERM, handler);
 
     /* create FIFO */
-    for (i = 0; i < 3; i ++ ) createFIFO(FIFO_NAMES[i]);
+    for (i = 0; i < 3; i ++ ) createFIFO(SERVER_FIFO_NAMES[i]);
 
     /* open FIFO for reading */
     int fifoFd[3], mxFd = -1;
     for (i = 0; i < 3; i ++ ) 
     {
-        fifoFd[i] = openFIFO(FIFO_NAMES[i]);
+        fifoFd[i] = openFIFOforRDWR(SERVER_FIFO_NAMES[i]);
         mxFd = (mxFd < fifoFd[i] ? fifoFd[i] : mxFd);
     }
 
