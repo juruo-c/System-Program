@@ -33,7 +33,7 @@ int Login(int fd)
 	LOGININFO info;
 	if ( read(fd, &info, sizeof(LOGININFO)) == -1 )
 	{
-        printf("Failed to read fifo %s\n", SERVER_FIFO_NAMES[0]);
+        printf("Failed to read fifo %s\n", SERVER_FIFO_NAMES[1]);
         perror("");
         exit(EXIT_FAILURE);
 	}	

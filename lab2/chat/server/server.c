@@ -11,6 +11,7 @@
 #include "register.h"
 #include "login.h"
 #include "message.h"
+#include "logout.h"
 
 #define _DATABASE_NAME_ "test"
 #define _DATABASE_USER_ "root"
@@ -36,6 +37,8 @@ int ProcessRequest(int request, int fd)
             return Login(fd);
         case 2: // send message 
             return 0;
+		case 3: // logout
+			return Logout(fd);
     }
 }
 
@@ -47,11 +50,11 @@ int main()
     signal(SIGTERM, handler);
 
     /* create FIFO */
-    for (i = 0; i < 3; i ++ ) createFIFO(SERVER_FIFO_NAMES[i]);
+    for (i = 0; i < SERVER_FIFONUM; i ++ ) createFIFO(SERVER_FIFO_NAMES[i]);
 
     /* open FIFO for reading */
-    int fifoFd[3], mxFd = -1;
-    for (i = 0; i < 3; i ++ ) 
+    int fifoFd[SERVER_FIFONUM], mxFd = -1;
+    for (i = 0; i < SERVER_FIFONUM; i ++ ) 
     {
         fifoFd[i] = openFIFOforRDWR(SERVER_FIFO_NAMES[i]);
         mxFd = (mxFd < fifoFd[i] ? fifoFd[i] : mxFd);
@@ -63,7 +66,7 @@ int main()
     {   
         /* init fds' set */
         FD_ZERO(&readFdSet);
-        for (i = 0; i < 3; i ++ ) FD_SET(fifoFd[i], &readFdSet);
+        for (i = 0; i < SERVER_FIFONUM; i ++ ) FD_SET(fifoFd[i], &readFdSet);
 
         /* if fds' set changes */
         if (select(mxFd + 1, &readFdSet, NULL, NULL, NULL) == -1)
@@ -73,7 +76,7 @@ int main()
         }
 
         /* when fds's set changes(get request from client), read fifo */
-        for (i = 0; i < 3; i ++ )
+        for (i = 0; i < SERVER_FIFONUM; i ++ )
         {
             if (FD_ISSET(fifoFd[i], &readFdSet))
                 ProcessRequest(i, fifoFd[i]);
@@ -82,7 +85,7 @@ int main()
     }
 
     /* close FIFOs */
-    for (i = 0; i < 3; i ++ ) close(fifoFd[i]);
+    for (i = 0; i < SERVER_FIFONUM; i ++ ) close(fifoFd[i]);
 
     return 0;
 }
