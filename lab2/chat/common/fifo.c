@@ -4,7 +4,9 @@ const char SERVER_FIFO_NAMES[SERVER_FIFONUM][100] =
 {
     "/tmp/server_fifos/register", // register fifo
     "/tmp/server_fifos/login", // login fifo
-    "/tmp/server_fifos/message" // send message fifo
+    "/tmp/server_fifos/message", // send message fifo
+	"/tmp/server_fifos/logout", // logout fifo
+	"/tmp/server_fifos/userlist", // users' list fifo
 };
 
 /* create FIFO if necessary */

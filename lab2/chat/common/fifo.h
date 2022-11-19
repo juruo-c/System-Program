@@ -9,7 +9,7 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <mysql.h>
-#define SERVER_FIFONUM 3
+#define SERVER_FIFONUM 5
 #define USER_MXLEN 25
 #define RESPLEN 100
 
