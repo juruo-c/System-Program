@@ -1,11 +1,73 @@
 #include "login.h"
 
+void Logout(char* username, char* myfifo)
+{
+	/* open server fifo for write only */
+	int fd = openFIFOforWR(SERVER_FIFO_NAMES[3]); 
+	
+	/* create logout data structure */
+	LOGOUTINFO info;
+	strncpy(info.username, username, strlen(username) + 1);
+	
+	/* write logout info to server fifo */
+	if (write(fd, &info, sizeof(LOGOUTINFO)) == -1)
+	{
+		printf("Failed to write fifo %s\n", SERVER_FIFO_NAMES[3]);
+		perror("");
+		close(fd);
+		exit(EXIT_FAILURE);
+	}
+	
+	close(fd);
+	
+	/* open client fifo to wait */
+	fd = openFIFOforRDWB(myfifo);
+	char response[RESPLEN];
+	if (read(fd, response, RESPLEN) == -1)
+	{
+		printf("Failed to read fifo %s\n", myfifo);
+		perror("");
+		close(fd);
+		exit(EXIT_FAILURE);
+	}
+	close(fd);
+
+	printf("%s\n", response);
+	printf("Backing to main page...\n");
+	sleep(2);
+}
+
 void Login_Successful(char* username, char* myfifo)
 {
-	printf("==================== %s, Welcome! ====================\n", username);
+	/* handle the SIGINT signal */
+	// TODO handle SIGINT signal( Logout user )
+		
+	/* show user main page and wait user to make choice */
 	while (1)
 	{
-		
+		system("clear");
+		printf("======================================================\n");
+		printf("==================== %s, Welcome! ====================\n", username);
+		puts("=============== what do you want to do ===============");
+		puts("===============                        ===============");
+		puts("=============== 1 - chat with someone  ===============");
+		puts("=============== 2 - logout             ===============");
+		puts("===============                        ===============");
+		puts("======================================================");
+		int choice;
+		scanf("%d", &choice);		
+		switch(choice)
+		{
+			case 1:
+				Chat(username, myfifo);
+				break;
+			case 2:
+				Logout(username, myfifo);
+				return;		
+			default :
+				printf("Please choose 1/ 2!");
+				sleep(2);
+		}
 	}
 }
 
@@ -76,8 +138,10 @@ void Login(char* myfifo)
         {
             printf("Failed to read fifo %s\n", myfifo);
             perror("");
+			close(fd);
             exit(EXIT_FAILURE);
         }
+		close(fd);
 		
 		/* Successful or Failure */
 		if (response[0] == 'S')

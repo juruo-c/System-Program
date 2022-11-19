@@ -43,6 +43,7 @@ int main()
 	
 	/* handle signals */
 	signal(SIGTERM, handler);			
+	signal(SIGINT, handler);	
 
 	/* ask user to make choice */
 	while(1)
@@ -62,7 +63,9 @@ int main()
 				exit(1);
 				break;
 			default:
-				puts("Please choose 1/ 2/ 3!");	
+				puts("Please choose 1/ 2/ 3!");
+				sleep(2);
+				system("clear");	
 		}
 	}
 

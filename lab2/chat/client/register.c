@@ -58,17 +58,21 @@ void Register(char* myfifo)
 		{	
 			printf("Failed to write fifo %s\n", SERVER_FIFO_NAMES[0]);
 			perror("");
+			close(fd);
 			exit(EXIT_FAILURE);
 		}
-		
+		close(fd);	
+	
 		/* waiting for server's response */
 		fd = openFIFOforRDWB(myfifo);
 		if ( read(fd, response, RESPLEN) == -1)
 		{	
 			printf("Failed to read fifo %s\n", myfifo);
 			perror("");
+			close(fd);
 			exit(EXIT_FAILURE);
 		}
+		close(fd);
 		
 		/* Successful or Failure */
 		if (response[0] == 'S')

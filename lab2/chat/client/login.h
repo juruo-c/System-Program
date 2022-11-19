@@ -8,6 +8,7 @@
 #include <fcntl.h>
 #include "../common/clientinfo.h"
 #include "../common/fifo.h"
+#include "chat.h"
 #define _DATABASE_NAME_ "test"
 #define _DATABASE_USER_ "root"
 #define _DATABASE_PASSWD_ "123456"
