@@ -12,8 +12,9 @@ void Register(char* myfifo)
 		printf("Please input your name(don't exceed 25 charaters): ");
 		fgets(username, USER_MXLEN * 2, stdin);
 		/* check username's length */
-		if (strlen(username) > 26)
+		if (strlen(username) > USER_MXLEN + 1)
 		{
+			while (getchar() != '\n');
 			printf("Username's length should be less than 25 charaters :(\nreboot register...\n");
 			sleep(2);
 			continue;			
@@ -27,8 +28,9 @@ void Register(char* myfifo)
 		printf("Please input your password(don't exceed 25 charaters): ");
 		fgets(password, USER_MXLEN * 2, stdin);
 		/* check password's length */
-		if (strlen(password) > 26) 
+		if (strlen(password) > USER_MXLEN + 1) 
 		{
+			while(getchar() != '\n');
 			printf("Password's length should be less than 25 charaters :(\nreboot register...\n");
 			sleep(2);
 			continue;	
