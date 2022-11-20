@@ -12,6 +12,8 @@
 #include "login.h"
 #include "message.h"
 #include "logout.h"
+#include "chat.h"
+#include "userlist.h"
 
 #define _DATABASE_NAME_ "test"
 #define _DATABASE_USER_ "root"
@@ -39,6 +41,8 @@ int ProcessRequest(int request, int fd)
             return 0;
 		case 3: // logout
 			return Logout(fd);
+		case 4: // returnn user list
+			return UserList(fd);
     }
 }
 
