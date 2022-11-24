@@ -19,7 +19,8 @@ typedef struct
 
 typedef struct 
 {
-    char username[USERNAME];
+    char sendername[USERNAME];
+	char receivername[USERNAME];
     char message[MASSAGE];
 }MESSAGEINFO, *MESSAGEINFOPTR;
 

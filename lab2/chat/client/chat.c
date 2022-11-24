@@ -18,9 +18,94 @@ int getNumLen(int num)
 	return res;
 }
 
+/* monitor my fifo to get otheruser's messages */
+void monitorMessage(char* username)
+{
+	int fd;
+	MESSAGEINFO info;
+
+	char myfifo[100];
+	sprintf(myfifo, "/tmp/client_fifos/client_%s", username);
+	
+	while (1)
+	{
+		fd = openFIFOforRDWB(myfifo);
+
+		if (read(fd, &info, sizeof(MESSAGEINFO)) == -1)
+		{
+			printf("Failed to read fifo %s\n", myfifo);
+			perror("");
+			close(fd);
+			exit(EXIT_FAILURE);
+		}
+
+		printf("%s: %s\n", info.sendername, info.message);
+
+		close(fd);
+	}
+}
+
 void chatWith(char* username, char* myfifo, char* otheruser)
 {
+	/* clean up stdin */
+	while(getchar() != '\n');
+
+	system("clear");
+
+	printf("================ chat with %s ================\n", otheruser);
+
+	/* fork child process to monitor user's fifo for otheruser's message */
+	pid_t childpid;
+	if ((childpid = fork()) == 0)
+		monitorMessage(username);
+		
+	int fd;
+	char message[MASSAGE];
+	MESSAGEINFO info;
+	strncpy(info.sendername, username, strlen(username) + 1);
+	strncpy(info.receivername, otheruser, strlen(otheruser) + 1);	
+
+	while (1)
+	{
+		printf(">"); fflush(stdout);
+		
+		fgets(message, MASSAGE, stdin);
+		/* check message's length */
+		if (strlen(message) > MASSAGE / 2 + 1)
+		{
+			while (getchar() != '\n');
+			puts("Failed to send message! Message's length should be less than 200 charaters :(\n");
+			continue;
+		}		
+		if (strlen(message) == 1)
+		{
+			puts("Failed to send message! Message should not be empty :(\n");
+			continue;
+		}
 	
+		/* copy message to MESSAGEINFO */
+		message[strlen(message) - 1] = '\0';
+		strncpy(info.message, message, strlen(message) + 1);
+
+		/* check quit; */
+		if (strcmp("quit;", message) == 0)
+		{
+			kill(childpid, SIGKILL);
+			wait(NULL);
+			break;
+		}
+
+		/* open server fifo for write */
+		fd = openFIFOforWR(SERVER_FIFO_NAMES[2]);
+		if (write(fd, &info, sizeof(MESSAGEINFO)) == -1)
+		{
+			printf("Failed to write fifo %s\n", SERVER_FIFO_NAMES[2]);
+			perror("");
+			close(fd);
+			exit(EXIT_FAILURE);
+		}
+		close(fd);
+	}
 }
 
 void Chat(char* username, char* myfifo)
@@ -131,7 +216,7 @@ void Chat(char* username, char* myfifo)
 				system("clear");
 				continue;	
 			}
-			chatWith(username, myfifo, userlist->usernames[choice]);			
+			chatWith(username, myfifo, userlist->usernames[choice - 1]);			
 		}
 		/* free userlist and close fd */
 		free(userlist);

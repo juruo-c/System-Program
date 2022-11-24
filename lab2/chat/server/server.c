@@ -38,7 +38,7 @@ int ProcessRequest(int request, int fd)
         case 1: // login
             return Login(fd);
         case 2: // send message 
-            return 0;
+            return Message(fd);
 		case 3: // logout
 			return Logout(fd);
 		case 4: // returnn user list
