@@ -39,8 +39,7 @@ void showChoices()
 
 int main()
 {
-	int i;
-	
+
 	/* handle signals */
 	signal(SIGTERM, handler);			
 	signal(SIGINT, handler);	

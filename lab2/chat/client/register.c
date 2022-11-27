@@ -49,7 +49,7 @@ void Register(char* myfifo)
 		sprintf(myfifo, "/tmp/client_fifos/client_%s", username);
 		createFIFO(myfifo);
 		
-		/* creeate register data structure */
+		/* create register data structure */
 		REGISTERINFO info;
 		strncpy(info.username, username, strlen(username) + 1);
 		strncpy(info.password, password, strlen(password) + 1);
