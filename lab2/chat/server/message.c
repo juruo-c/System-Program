@@ -13,7 +13,7 @@ int Message(int fd)
 		close(fd);
 	}	
 
-	printf("Receive Message! Sender: %s, Receiver: %s, Message: %s\n", info.sendername, info.receivername, info.message);
+	//printf("Receive Message! Sender: %s, Receiver: %s, Message: %s\n", info.sendername, info.receivername, info.message);
 
 	/* create receiver's fifo */
 	char fifo[100];

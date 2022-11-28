@@ -12,7 +12,6 @@
 #include "login.h"
 #include "message.h"
 #include "logout.h"
-#include "chat.h"
 #include "userlist.h"
 
 #define _DATABASE_NAME_ "test"
@@ -24,7 +23,7 @@
 void handler(int sig)
 {
     int i;
-    for (i = 0; i < 3; i ++ ) unlink(SERVER_FIFO_NAMES[i]);
+    for (i = 0; i < SERVER_FIFONUM; i ++ ) unlink(SERVER_FIFO_NAMES[i]);
     exit(1);
 }
 

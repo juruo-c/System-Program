@@ -80,12 +80,7 @@ int Register(int fd)
 	mysql_free_result(res);
 
     /* add userinfo(username, password, fifo) into database */
-	memset(query, 0, sizeof(query));
-	strcat(query, "Insert into userinfo(name, passwd, online) values('");
-	strcat(query, info.username);
-	strcat(query, "','");
-	strcat(query, info.password);
-	strcat(query, "',0);");
+	sprintf(query, "insert into userinfo(name, passwd, online) values('%s','%s',0);",info.username, info.password);
 	if (mysql_query(&conn, query))
 	{
 		printf("Failed to query '%s'\n", query);
