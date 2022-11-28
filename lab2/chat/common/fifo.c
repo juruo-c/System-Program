@@ -23,7 +23,7 @@ void createFIFO(const char* FIFO_NAME)
     }
 }
 
-/* open specific fifo for read only */
+/* open specific fifo for read and write */
 int openFIFOforRDWR(const char* FIFO_NAME)
 {
     int fd = open(FIFO_NAME, O_RDWR);
